@@ -44,6 +44,19 @@ namespace FastMemberTests
         }
 
         [Test]
+        public void DeclOrderTest_Getmembers()
+        {
+            var access = TypeAccessor.Create(typeof(PropsAndFieldsOnClass));
+            Assert.IsTrue(access.GetMembersSupported);
+            var members = access.GetMembers();
+            Assert.AreEqual(4, members.Count);
+            Assert.AreEqual("A", members[0].Name);
+            Assert.AreEqual("B", members[1].Name);
+            Assert.AreEqual("D", members[2].Name);
+            Assert.AreEqual("C", members[3].Name);
+        }
+
+        [Test]
         public void Getmembers()
         {
             var access = TypeAccessor.Create(typeof(PropsOnClass));
@@ -55,7 +68,6 @@ namespace FastMemberTests
             Assert.AreEqual("C", members[2].Name);
             Assert.AreEqual("D", members[3].Name);
         }
-
         [Test]
         public void BasicReadTest_PropsOnClass_ViaWrapper()
         {
@@ -236,6 +248,13 @@ namespace FastMemberTests
             public decimal? D;
         }
 
+        public class PropsAndFieldsOnClass
+        {
+            public int A;
+            public string B;
+            public int D { get; set; }
+            public string C { get; set; }
+        }
 
         public class HasDefaultCtor { }
         public class HasNoDefaultCtor { public HasNoDefaultCtor(string s) { } }

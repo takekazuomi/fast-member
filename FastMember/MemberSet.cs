@@ -13,7 +13,7 @@ namespace FastMember
         Member[] members;
         internal MemberSet(Type type)
         {
-            members = type.GetProperties().Cast<MemberInfo>().Concat(type.GetFields().Cast<MemberInfo>()).OrderBy(x => x.Name, StringComparer.InvariantCulture)
+            members = type.GetProperties().Cast<MemberInfo>().Concat(type.GetFields().Cast<MemberInfo>()).OrderBy(info => info.MetadataToken)
                 .Select(member => new Member(member)).ToArray();
         }
         /// <summary>
