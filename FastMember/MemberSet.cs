@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -59,6 +60,8 @@ namespace FastMember
     public sealed class Member
     {
         private readonly MemberInfo member;
+        private readonly Hashtable attributes = new Hashtable();
+
         internal Member(MemberInfo member)
         {
             this.member = member;
@@ -92,6 +95,26 @@ namespace FastMember
             return Attribute.IsDefined(member, attributeType);
         }
 
+        /// <summary>
+        /// Get the attribute specified defined on this type
+        /// </summary>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
+        public Attribute[] GetCustomAttributes(Type attributeType)
+        {
+            if (attributeType == null) throw new ArgumentNullException("attributeType");
+            Attribute[] attr = (Attribute[])attributes[attributeType];
+            if (attr != null) return attr;
 
+            lock (attributes)
+            {
+                attr = (Attribute[])attributes[attributeType];
+                if (attr != null) return attr;
+
+                attr = Attribute.GetCustomAttributes(member, attributeType);
+                attributes[attributeType] = attr;
+                return attr;
+            }
+        }
     }
 }
